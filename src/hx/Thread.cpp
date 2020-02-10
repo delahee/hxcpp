@@ -266,22 +266,31 @@ Dynamic __hxcpp_thread_create(Dynamic inStart)
     #ifdef EMSCRIPTEN
     return hx::Throw( HX_CSTRING("Threads are not supported on Emscripten") );
     #else
+	
+	//printf("preparing threading\n");
     g_threadInfoMutex.Lock();
     int threadNumber = g_nextThreadNumber++;
     g_threadInfoMutex.Unlock();
 
+	//printf("new hxThreadInfo\n");
 	hxThreadInfo *info = new hxThreadInfo(inStart, threadNumber);
 
+	//printf("hx::GCPrepareMultiThreaded\n");
 	hx::GCPrepareMultiThreaded();
+	
+	//printf("hx::EnterGCFreeZone\n");
 	hx::EnterGCFreeZone();
 
+	//printf("HxCreateDetachedThread\n");
     bool ok = HxCreateDetachedThread(hxThreadFunc, info);
     if (ok)
     {
        info->mSemaphore->Wait();
     }
 
+	printf("ExitGCFreeZone\n");
     hx::ExitGCFreeZone();
+	printf("CleanSemaphore\n");
     info->CleanSemaphore();
 
     if (!ok)

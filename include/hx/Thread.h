@@ -219,16 +219,39 @@ inline bool HxCreateDetachedThread(void *(*func)(void *), void *param)
 {
 	pthread_t t;
 	pthread_attr_t attr;
-	if (pthread_attr_init(&attr) != 0)
+	//printf("pthread_attr_init\n");
+	int ai_retval = pthread_attr_init(&attr);
+	if (ai_retval != 0){
+		printf("pthread_attr_init err %d\n",ai_retval);
 		return false;
-#ifdef PTHREAD_CREATE_DETACHED
-	if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0)
-		return false;
+	}
+	
+#ifdef NN_NINTENDO_SDK 
+	#ifdef PTHREAD_CREATE_DETACHED
+		//printf("PTHREAD_CREATE_DETACHED %d\n",PTHREAD_CREATE_DETACHED);
+		int det_retval = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+		if (det_retval != 0){
+			printf("pthread_attr_setdetachstate err %d\n",det_retval);
+			return false;
+		}
+	#endif
 #endif
-	if (pthread_create(&t, &attr, func, param) != 0 )
+	printf("pthread_create\n");
+	auto retval = pthread_create(&t, &attr, func, param);
+	if ( retval != 0 ){
+		printf("pthread_create errno: %d\n",retval);
 		return false;
-	if (pthread_attr_destroy(&attr) != 0)
+	}
+#ifdef NN_NINTENDO_SDK 
+	int dt_retval = pthread_detach(t);
+	if( dt_retval!=0){
+		printf("pthread_detach err...%d\n",dt_retval);
+	}
+#endif
+	if (pthread_attr_destroy(&attr) != 0){
+		printf("pthread_attr_destroy err...\n");
 		return false;
+	}
 	return true;
 }
 
