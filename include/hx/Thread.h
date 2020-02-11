@@ -226,7 +226,7 @@ inline bool HxCreateDetachedThread(void *(*func)(void *), void *param)
 		return false;
 	}
 	
-#ifdef NN_NINTENDO_SDK 
+#ifndef NN_NINTENDO_SDK 
 	#ifdef PTHREAD_CREATE_DETACHED
 		//printf("PTHREAD_CREATE_DETACHED %d\n",PTHREAD_CREATE_DETACHED);
 		int det_retval = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
