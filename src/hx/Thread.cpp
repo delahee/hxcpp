@@ -288,9 +288,9 @@ Dynamic __hxcpp_thread_create(Dynamic inStart)
        info->mSemaphore->Wait();
     }
 
-	printf("ExitGCFreeZone\n");
+	//printf("ExitGCFreeZone\n");
     hx::ExitGCFreeZone();
-	printf("CleanSemaphore\n");
+	//printf("CleanSemaphore\n");
     info->CleanSemaphore();
 
     if (!ok)
