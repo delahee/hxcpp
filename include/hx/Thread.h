@@ -236,7 +236,6 @@ inline bool HxCreateDetachedThread(void *(*func)(void *), void *param)
 		}
 	#endif
 #endif
-	//printf("pthread_create\n");
 	auto retval = pthread_create(&t, &attr, func, param);
 	if ( retval != 0 ){
 		printf("pthread_create errno: %d\n",retval);
